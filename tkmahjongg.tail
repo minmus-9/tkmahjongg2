@@ -243,11 +243,17 @@ pack .xhelp.t -fill both
 set iList {}
 foreach name [array names tile_info] {
     foreach {cls n match} $tile_info($name) {
+        image create photo tmp_image -data $image_data($name) -format PNG
+        image create photo $name
+        $name copy tmp_image
+        # -from 16 0 112 128
+        rename tmp_image {}
         for {set i 0} {$i<$n} {incr i} {
             set in ${name}_$i
             set image_to_name($in) $name
             set reversed($in) 0
-            image create photo $in -data $image_data($name) -format PNG
+            set data [$name data -format PNG]
+            image create photo $in -data $data -format PNG
             lappend iList $in
         }
     }
@@ -500,15 +506,26 @@ proc deal {{layout {}}} {
 
 # this renders the table onto the canvas
 proc draw {} {
-    global halfw halfh htile tab tfg wtile xhalfw xhalfh
-    global classtab tile_info tile_text
+    global halfw halfh htile tab wtile xhalfw xhalfh
+    global tile_info tile_text colortab image_to_name
     .c delete all
-    for {set level 0} {$level<6} {incr level} {
+    for {set level 0} {$level<7} {incr level} {
         for {set x 0} {$x<32} {incr x} {
             for {set y 0} {$y<16} {incr y} {
                 if ![catch {set img $tab($x:$y:$level)}] {
-                    set xx [expr $x*$xhalfw+4+5*$level]
-                    set yy [expr $y*$xhalfh+4+5*$level]
+                    #set xx [expr $x*$xhalfw+4+5*$level]
+                    #set yy [expr $y*$xhalfh+4+5*$level]
+                    set xx [expr $x*$xhalfw+4]
+                    set yy [expr $y*$xhalfh+4]
+                    set name $image_to_name($img)
+                    if {$level} {
+                        set idx [expr [llength $colortab] - $level]
+                        set color [lindex $colortab $idx]
+                        set data [$name data -background $color -format PNG]
+                    } else {
+                        set data [$name data -format PNG]
+                    }
+                    $img configure -data $data
                     .c create image $xx $yy -anchor nw -image $img \
                             -tags "$x:$y:$level $img"
                     .c bind $img <1> "doSel $img"
@@ -518,6 +535,14 @@ proc draw {} {
         }
     }
     update
+}
+
+# this initializes everything and starts a new game
+proc newGame {{layout {}}} {
+    setup
+    initTab
+    shuffle
+    deal $layout
 }
 
 # this initializes everything and starts a new game
@@ -544,5 +569,7 @@ foreach b {.about .new .load .choose .replay .quit .help} {
 
 # event bindings
 bind .c <3> { if {$sel!={}} {doSel $sel} }
+bind . <Control-Key-w> {.quit invoke}
+focus .
 
 ## EOF tkmahjongg.tail

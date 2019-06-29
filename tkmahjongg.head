@@ -72,6 +72,15 @@
 
 # USER CONFIGURABLE STUFF
 
+# per-level colors
+set colortab {#008cf8 #00fc00 #f7fc00 #f87c00 #f80000 #808080}
+set colortab {red orange yellow green blue violet}
+set colortab {#e00000 #e0a000 #808080 #00a000 #0000ff #600060}
+
+# window background
+set wbg {#004000}
+set wbg black
+
 # RNG seed
 set rSeed [expr [clock seconds] % 1000000000]
 
@@ -93,9 +102,6 @@ set vbell 1
 # window foreground
 set wfg white
 
-# window background
-set wbg darkgreen
-
 # labels for graphical/text display mode
 set blbl(about) {About}
 set blbl(new) {New Game}
@@ -105,16 +111,6 @@ set blbl(choose) {Choose Board}
 set blbl(undo) {Undo}
 set blbl(game) { Game #: }
 set blbl(rem) {Tiles Remaining: }
-
-# classes are
-#   0   bamboo
-#   1   pin
-#   2   man
-#   3   wind
-#   4   flower
-#   5   season
-#   6   dragon
-set colortab {#008cf8 #00fcf8 #00fc00 #f8fc00 #f87c00 #f80000 #808080}
 
 # END OF USER CONFIGURABLE STUFF
 
