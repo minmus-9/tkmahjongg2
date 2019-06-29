@@ -88,7 +88,7 @@ set hfont {-adobe-courier-medium-r-*-*-*-360-*}
 set blfont {-adobe-helvetica-bold-r-*-*-*-280-*}
 
 # default for -vb opt (visual bell)
-set vbell 0
+set vbell 1
 
 # window foreground
 set wfg white
@@ -97,11 +97,12 @@ set wfg white
 set wbg darkgreen
 
 # labels for graphical/text display mode
-set blbl(about) {About TkMahjongg}
+set blbl(about) {About}
 set blbl(new) {New Game}
-set blbl(replay) {Replay Game}
-set blbl(load) {Load XMahjongg Board}
-set blbl(undo) {Undo Last Move}
+set blbl(replay) {Replay}
+set blbl(load) {Load Board}
+set blbl(choose) {Choose Board}
+set blbl(undo) {Undo}
 set blbl(game) { Game #: }
 set blbl(rem) {Tiles Remaining: }
 

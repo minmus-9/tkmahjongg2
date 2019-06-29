@@ -1,4 +1,4 @@
-########################################################################
+#######################################################################
 ## tkmahjongg.tail
 
 # revvid lut
@@ -69,7 +69,7 @@ if ![catch {set geometry}] {
 }
 while {[llength $argv]} {
     if {[lindex $argv 0]=="-vb"} {
-        set vbell 1
+        set vbell [expr 1 - $vbell]
     } elseif {[lindex $argv 0]=="-l"} {
         set startupLayout [lindex $argv 1]
         set argv [lreplace $argv 0 0]
@@ -123,13 +123,13 @@ button .replay -fg $wfg -bg $wbg -text $blbl(replay) \
     if [query] replay
 }
 
-#button .load -fg $wfg -bg $wbg -text $blbl(load) \
-#        -font $blfont -command {
-#    if [query] {
-#        set f [tk_getOpenFile -parent .c -title {Load Board}]
-#        if {$f!={}} { newGame $f }
-#    }
-#}
+button .load -fg $wfg -bg $wbg -text $blbl(load) \
+        -font $blfont -command {
+    if [query] {
+        set f [tk_getOpenFile -parent .c -title {Load Board}]
+        if {$f!={}} { loadFile $f; newGame }
+    }
+}
 
 button .undo -fg $wfg -bg $wbg -state disabled -font $blfont \
         -text $blbl(undo) \
@@ -164,10 +164,10 @@ label .lr -text $blbl(rem) -fg $wfg -bg $wbg \
 label .rem -textvariable nTiles -width 3 -fg $wfg -bg $wbg \
         -font $blfont
 
-foreach b {.about .new .replay .quit .help} {
+foreach b {.about .new .replay .load .quit .help} {
     $b configure -state disabled
 }
-pack .about .new .replay .undo .quit .help -side left
+pack .about .new .replay .load .undo .quit .help -side left
 pack .rem .lr .ld .lgame .lg -side right
 
 proc about {} {
@@ -287,11 +287,11 @@ if !$vbell {
     proc deny {} {
         global wfg
 
-        set ob [. cget -background]
-        . configure -background $wfg
+        set ob [.c cget -background]
+        .c configure -background $wfg
         update
         after 100
-        . configure -background $ob
+        .c configure -background $ob
         update
     }
 }
@@ -525,7 +525,7 @@ proc replay {} {
 }
 
 newGame $startupLayout
-foreach b {.about .new .replay .quit .help} {
+foreach b {.about .new .load .replay .quit .help} {
     $b configure -state normal
 }
 .c configure -cursor {}
