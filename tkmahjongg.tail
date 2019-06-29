@@ -131,6 +131,18 @@ button .load -fg $wfg -bg $wbg -text $blbl(load) \
     }
 }
 
+button .choose -fg $wfg -bg $wbg -text $blbl(choose) \
+    -font $blfont -command {
+        if [query] {
+            .choose.m post [winfo pointerx .] [winfo pointery .]
+        }
+    }
+
+menu .choose.m -fg $wfg -bg $wbg -font $blfont
+foreach board $boards {
+    .choose.m add radio -command "newGame $board" -label $board
+}
+
 button .undo -fg $wfg -bg $wbg -state disabled -font $blfont \
         -text $blbl(undo) \
 -command {
@@ -164,10 +176,10 @@ label .lr -text $blbl(rem) -fg $wfg -bg $wbg \
 label .rem -textvariable nTiles -width 3 -fg $wfg -bg $wbg \
         -font $blfont
 
-foreach b {.about .new .replay .load .quit .help} {
+foreach b {.about .new .replay .load .choose .quit .help} {
     $b configure -state disabled
 }
-pack .about .new .replay .load .undo .quit .help -side left
+pack .about .new .replay .load .choose .undo .quit .help -side left
 pack .rem .lr .ld .lgame .lg -side right
 
 proc about {} {
@@ -525,7 +537,7 @@ proc replay {} {
 }
 
 newGame $startupLayout
-foreach b {.about .new .load .replay .quit .help} {
+foreach b {.about .new .load .choose .replay .quit .help} {
     $b configure -state normal
 }
 .c configure -cursor {}
