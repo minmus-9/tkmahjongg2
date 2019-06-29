@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=TkMahjongg
+Comment=Play Mahjongg
+Keywords=mahjongg;
+TryExec=tkmahjongg
+Exec=tkmahjongg
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=tkmahjongg
+X-GNOME-DocPath=
+Categories=MahJongg;
