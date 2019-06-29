@@ -75,26 +75,26 @@
 # RNG seed
 set rSeed [expr [clock seconds] % 1000000000]
 
-# path of layout to load at startup
-set startupFile {}
+# layout to load at startup
+set startupLayout default
 
 # you can use proportional fonts, too
-set tfont {-adobe-times-bold-r-*-*-*-240-*}
+set afont {-adobe-helvetica-bold-r-*-*-*-360-*}
 
 # font for help
-set hfont {-adobe-courier-medium-r-*-*-*-240-*}
+set hfont {-adobe-courier-medium-r-*-*-*-360-*}
 
 # font for buttons and labels
-set blfont {-adobe-helvetica-bold-r-*-*-*-240-*}
+set blfont {-adobe-helvetica-bold-r-*-*-*-280-*}
 
 # default for -vb opt (visual bell)
 set vbell 0
 
 # window foreground
-set wfg black
+set wfg white
 
 # window background
-set wbg snow
+set wbg darkgreen
 
 # labels for graphical/text display mode
 set blbl(about) {About TkMahjongg}
@@ -105,6 +105,16 @@ set blbl(undo) {Undo Last Move}
 set blbl(game) { Game #: }
 set blbl(rem) {Tiles Remaining: }
 
+# classes are
+#   0   bamboo
+#   1   pin
+#   2   man
+#   3   wind
+#   4   flower
+#   5   season
+#   6   dragon
+set colortab {#008cf8 #00fcf8 #00fc00 #f8fc00 #f87c00 #f80000 #808080}
+
 # END OF USER CONFIGURABLE STUFF
 
 ########################################################################
@@ -112,12 +122,9 @@ set tkmahjongg_help {
                             TkMahjongg
 
 BACKGROUND
-       I shamelessly swiped the core of the game from  xmahjongg.
-       This includes the board,  tiles,  and documentation ;^) In
-       fact, the only reason I wrote this was for the "undo  last
-       move" and "flash matching tiles" features (I'm  not a very
-       good mahjongg player). I apologize in advance to those who
-       feel that these features are philosophically repugnant.
+       I shamelessly swiped the core of the game from xmahjongg.
+       This includes the board and documentation ;^) The tiles
+       are an open-source set from the internet.
 
        Well,  there is one other reason I wrote it:  to get it to
        work under Windoze...  I apologize in advance to those who
