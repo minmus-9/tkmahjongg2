@@ -1,6 +1,7 @@
 BASE64=base64
 
-all:	clean boards.tcl tiles.tcl
+tkmahjongg:	clean boards.tcl tiles.tcl tkmahjongg.head tkmahjongg.tail
+	cat tkmahjongg.head boards.tcl tiles.tcl tkmahjongg.tail > $@
 
 boards.tcl:
 	find boards -type f -print | sort | ( \
@@ -36,4 +37,4 @@ tiles.tcl:
 	done) > $@
 
 clean:	
-	rm -f boards.tcl tiles.tcl
+	rm -f boards.tcl tiles.tcl tkmahjongg

@@ -114,13 +114,13 @@ set wfg black
 set wbg snow
 
 # labels for graphical/text display mode
-set blbl(about) {{About TkMahjongg} {About}}
-set blbl(new) {{New Game} {New}}
-set blbl(replay) {{Replay Game} {Replay}}
-set blbl(load) {{Load XMahjongg Board} {Load}}
-set blbl(undo) {{Undo Last Move} {Undo}}
-set blbl(game) {{ Game #: } { Game: }}
-set blbl(rem) {{Tiles Remaining: } {Tiles: }}
+set blbl(about) {About TkMahjongg}
+set blbl(new) {New Game}
+set blbl(replay) {Replay Game}
+set blbl(load) {Load XMahjongg Board}
+set blbl(undo) {Undo Last Move}
+set blbl(game) { Game #: }
+set blbl(rem) {Tiles Remaining: }
 
 # font for buttons and labels
 set blfont {-adobe-helvetica-bold-r-*-*-*-120-*}
@@ -249,3 +249,6 @@ CREDITS
       for developing TCL  and TK.  Without all  of these pieces,
       you wouldn't be reading this.
 }
+
+## EOF tkmahjongg.head
+
