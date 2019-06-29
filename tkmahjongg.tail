@@ -1,8 +1,11 @@
 ########################################################################
 ## tkmahjongg.tail
 
-# define bitmap data
-set bitmap_data(autumn) { }
+# revvid lut
+foreach tile $tiles_normal {
+    set revvid($tile) $tile-inv
+    set revvid($tile-inv) $tile
+}
 
 # default layout
 set tileDesc { }
@@ -109,14 +112,17 @@ button .about -text $blbl(about) -fg $wfg -bg $wbg \
         draw
     }
 }
+
 button .new -fg $wfg -bg $wbg -text $blbl(new) \
         -font $blfont -command {
     if [query] newGame
 }
+
 button .replay -fg $wfg -bg $wbg -text $blbl(replay) \
         -font $blfont -command {
     if [query] replay
 }
+
 #button .load -fg $wfg -bg $wbg -text $blbl(load) \
 #        -font $blfont -command {
 #    if [query] {
@@ -124,6 +130,7 @@ button .replay -fg $wfg -bg $wbg -text $blbl(replay) \
 #        if {$f!={}} { newGame $f }
 #    }
 #}
+
 button .undo -fg $wfg -bg $wbg -state disabled -font $blfont \
         -text $blbl(undo) \
 -command {
@@ -134,21 +141,29 @@ button .undo -fg $wfg -bg $wbg -state disabled -font $blfont \
     }
     eval $cmd
 }
+
 button .quit -fg $wfg -bg $wbg -text Quit -font $blfont \
         -command { if [query] exit }
+
 button .help -fg $wfg -bg $wbg -text Help -font $blfont \
         -command {wm deiconify .xhelp; raise .xhelp}
+
 # labels on right
 label .lg -text $blbl(game) -fg $wfg -bg $wbg \
         -font $blfont
+
 label .lgame -textvariable gSeed -width 10 -anchor e -fg $wfg -bg $wbg \
         -font $blfont
+
 # shim
 label .ld -width 2 -fg $wfg -bg $wbg
+
 label .lr -text $blbl(rem) -fg $wfg -bg $wbg \
         -font $blfont
+
 label .rem -textvariable nTiles -width 3 -fg $wfg -bg $wbg \
         -font $blfont
+
 foreach b {.about .new .replay .quit .help} {
     $b configure -state disabled
 }
@@ -218,13 +233,13 @@ foreach name [array names tile_info] {
     foreach {cls n match} $tile_info($name) {
         for {set i 0} {$i<$n} {incr i} {
             set in ${name}_$i
-            set data $image_data($name)
-            image create photo $in -data $data -format PNG
+            set image_to_name($in) $name
+            set reversed($in) 0
+            image create photo $in -data $image_data($name) -format PNG
             lappend iList $in
         }
     }
 }
-unset bitmap_data
 
 # this determines if a tile is free
 proc isFree tile {
@@ -282,9 +297,15 @@ if !$vbell {
 }
 
 proc revVid tile {
-    set bg [$tile cget -foreground]
-    set fg [$tile cget -background]
-    $tile configure -foreground $fg -background $bg
+    global image_data image_to_name reversed
+    set name $image_to_name($tile)
+    if {$reversed($tile) == 1} {
+        $tile configure -data $image_data($name)
+        set reversed($tile) 0
+    } else {
+        $tile configure -data $image_data($name-inv)
+        set reversed($tile) 1
+    }
 }
 
 # this proc performs a move
@@ -336,7 +357,6 @@ proc doSel v {
         # do move
         if {$sel!=""} {
             doMove $sel $v
-        # select it
         } else {
             revVid $v
             set sel $v
