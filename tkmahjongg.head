@@ -1,0 +1,251 @@
+#!/usr/bin/env wish
+########################################################################
+# tkmahjongg2 -- Mahjongg version 2
+#
+# tkmahjongg2 update 2019/06/29 -- the first in over 21 years!
+#
+########################################################################
+# tkmahjongg version 1 info:
+#
+# Author: Mark Hays <hays@azstarnet.com>
+#
+# $Id: tkmahjongg,v 1.7 1997/12/08 05:58:51 hays Exp hays $
+#
+# Usage:
+#   Search for "tkmahjongg_help" for detailed usage information -- it
+#   comes just after the customization section.
+#
+########################################################################
+# COPYRIGHT by Mark Hays 1997-2019. All rights reserved.
+# 
+# This softwate is copyrighted under the GNU General Public License.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# You can also obtain the GPL via FTP from:
+#
+#                ftp://prep.ai.mit.edu/pub/gnu/GPL
+#
+# The board layouts are not under the GPL; they are instead covered
+# under the terms of the xmahjongg copyright (see below).
+#
+# That leaves my TK code ;^) That bit *is* covered by the GPL.
+#
+########################################################################
+# XMAHJONGG COPYRIGHT:
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies, that both the above
+# copyright notice and this permission notice appear in supporting documen-
+# tation, and that the original copyright notices on the game boards are
+# displayed in their original format and clarity.  Permission to sell this
+# software is not NOT granted without written permission from the author.
+# Permission to include this software free with other software packages in
+# NOT granted without written permission from the author.
+#
+# This distribution is publicly available, but is NOT in the public domain.
+#
+# I make no representations about the suitability of this software for any
+# purpose.  It is provided "as is" without express or implied warranty.
+#
+# Author:  Jeff S. Young
+#          Cray Research, Inc.
+#          655F Loan Oak Drive
+#          Eagan, MN  55121
+#
+#          jsy@cray.com
+#
+########################################################################
+
+# USER CONFIGURABLE STUFF
+
+# colors for levels and tile classes.
+#   bottom level is 0. max level is 5.
+#   classes are 0:bamboo, 1:pin, 2:man, 3:wind
+#               4:flower, 5:season, 6:dragon
+set colortab {#008cf8 #00fcf8 #00fc00 #f8fc00 #f87c00 #f80000 #808080}
+set classtab $colortab
+
+# default for -class opt (color tiles by class, not level)
+set copt 0
+
+# RNG seed
+set rSeed -1
+
+# path of layout to load at startup
+set startupFile {}
+
+# tile foreground
+set tfg black
+
+# file font for text mode
+set tfont {-adobe-courier-bold-r-*-*-*-120-*}
+
+# big tile font for text mode (used if tile text is a single char)
+set btfont {-adobe-courier-bold-r-*-*-*-240-*}
+
+# you can use proportional fonts, too
+#set tfont {-adobe-times-bold-r-*-*-*-120-*}
+#set btfont {-adobe-times-bold-r-*-*-*-240-*}
+
+# font for help
+set hfont {-adobe-courier-medium-r-*-*-*-140-*}
+
+# default for -vb opt (visual bell)
+set vbell 0
+
+# window foreground
+set wfg black
+
+# window background
+set wbg snow
+
+# labels for graphical/text display mode
+set blbl(about) {{About TkMahjongg} {About}}
+set blbl(new) {{New Game} {New}}
+set blbl(replay) {{Replay Game} {Replay}}
+set blbl(load) {{Load XMahjongg Board} {Load}}
+set blbl(undo) {{Undo Last Move} {Undo}}
+set blbl(game) {{ Game #: } { Game: }}
+set blbl(rem) {{Tiles Remaining: } {Tiles: }}
+
+# font for buttons and labels
+set blfont {-adobe-helvetica-bold-r-*-*-*-120-*}
+
+# END OF USER CONFIGURABLE STUFF
+
+########################################################################
+set tkmahjongg_help {
+                            TkMahjongg
+
+BACKGROUND
+       I shamelessly swiped the core of the game from  xmahjongg.
+       This includes the board,  tiles,  and documentation ;^) In
+       fact, the only reason I wrote this was for the "undo  last
+       move" and "flash matching tiles" features (I'm  not a very
+       good mahjongg player). I apologize in advance to those who
+       feel that these features are philosophically repugnant.
+
+       Well,  there is one other reason I wrote it:  to get it to
+       work under Windoze...  I apologize in advance to those who
+       feel that  this feature is  morally and/or philosophically
+       repugnant.
+
+DESCRIPTION
+       Mah  jongg  is  an  ancient chinese game usually played by
+       four players  with tiles similar  to dominos. This is a TK
+       version  for  the  solitaire  game.  If  you  have  played
+       xmahjongg, this version will be very familiar to you.
+
+THEORY OF PLAY
+       The object of the game is to remove all the tiles from the
+       board.  Tiles are removed in  by  matching  two  identical
+       tiles  which  have  either an open left edge or open right
+       edge.  The only exception to this rule is  that  any  open
+       "flower"  tile  (bamboo,  orchid,  plum, or chrysanthemum)
+       matches any other open "flower" tile and any open "season"
+       tile (spring, summer, autumn, or winter) matches any other
+       open "season" tile.
+
+       The display has two distinct areas: the playing field  and
+       the control field.
+
+       The bottom area is the playing field.  To remove a pair of
+       tiles, click the left mouse button on a tile  (which  will
+       light up)  and  then  click the left  mouse button on  the
+       matching tile. At this  point, both  tiles will  disappear
+       from the board. If after selecting  the  first tile,   you
+       decide  that  you  don't wish  to play  that tile,  simply
+       reclick the left button  on the tile, or  click  the third
+       mouse button anywhere on the playing field.
+
+       When a tile is selected, clicking the middle  mouse button
+       or pressing  the "Shift" key and  clicking the right mouse 
+       button   causes  all  matching  playable  tiles  to  flash
+       briefly.  Pressing the "Control" key  and clicking  either
+       the  middle  or right  mouse button  with a  tile selected
+       causes all  matching tiles  to flash,  regardless of their
+       playability or visibility.
+
+       The  top  area is the control field.  The board number and
+       the number of remaining tiles are on the right side of the
+       board.   The  left  side has some buttons  for controlling
+       the game. To select a button,  click the left mouse button
+       on it.
+
+           ABOUT TKMAHJONGG        Display info about tkmahjongg
+           NEW GAME                Start a new game
+           REPLAY GAME             Replay the current game
+           LOAD XMAHJONGG BOARD    Load an xmahjongg board layout
+           UNDO LAST MOVE          Take back move(s)
+           QUIT                    Exit the game
+           HELP                    Bring up this window
+
+
+INVOCATION
+      On  UNIX systems,  change the first  line of tkmahjongg  to
+      point  to  your  wish  executable,  set execute  permission
+      for tkmahjongg,  and place it  somewhere in your PATH.  You
+      can then run it with:
+
+                tkmahjongg [options]
+
+      Under Windows, you can start tkmahjongg with:
+
+                wish8.0 tkmahjongg [options]
+
+      Of  course  you  should change "wish8.0" to  whatever  your
+      wish executable is called.
+
+OPTIONS
+      tkmahjongg  supports  a  number  of  command-line  options:
+
+           [-b #]                 Choose game # (0-99999)
+           [-c]                   Color tiles by group not level
+           [-geometry geom]       Set window geometry to geom
+           [-i]                   Start iconified
+           [-l /path/to/file]     Load xmahjongg layout file
+           [-r]                   Reverse fg/bg colors
+           [-vb]                  Visual bell (not audible)
+
+      If you  use the -geometry option,  do not  specify a window
+      size. For example, the following is fine:
+
+                tkmahjongg -geometry +20+20
+
+      but the following won't work right:
+
+                tkmahjongg -geometry 640x480+20+20
+
+      Near  the top  of the  tkmahjongg script  are a  number  of
+      other  parameters that  you may wish  to adjust,  including
+      fonts, colors, etc.
+
+COPYRIGHT
+      tkmahjongg is  Copyright (c) 1997  by Mark Hays.  Parts  of
+      tkmahjongg  are copyrighted  by others.  Detailed copyright
+      information  appears  at the top of  the tkmahjongg script.
+
+      Some of this information  appears when the  game starts up,
+      and is also available  via the "About"  button  (left-click
+      in the playing field to return to the game).
+
+CREDITS
+      Thanks to  Martin Persson for  the  tiles,  Jeff Young  for 
+      the board layout  files and xmahjongg,  and John Ousterhout
+      for developing TCL  and TK.  Without all  of these pieces,
+      you wouldn't be reading this.
+}
