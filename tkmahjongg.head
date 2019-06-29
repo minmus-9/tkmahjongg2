@@ -72,37 +72,20 @@
 
 # USER CONFIGURABLE STUFF
 
-# colors for levels and tile classes.
-#   bottom level is 0. max level is 5.
-#   classes are 0:bamboo, 1:pin, 2:man, 3:wind
-#               4:flower, 5:season, 6:dragon
-set colortab {#008cf8 #00fcf8 #00fc00 #f8fc00 #f87c00 #f80000 #808080}
-set classtab $colortab
-
-# default for -class opt (color tiles by class, not level)
-set copt 0
-
 # RNG seed
-set rSeed -1
+set rSeed [expr [clock seconds] % 1000000000]
 
 # path of layout to load at startup
 set startupFile {}
 
-# tile foreground
-set tfg black
-
-# file font for text mode
-set tfont {-adobe-courier-bold-r-*-*-*-120-*}
-
-# big tile font for text mode (used if tile text is a single char)
-set btfont {-adobe-courier-bold-r-*-*-*-240-*}
-
 # you can use proportional fonts, too
-#set tfont {-adobe-times-bold-r-*-*-*-120-*}
-#set btfont {-adobe-times-bold-r-*-*-*-240-*}
+set tfont {-adobe-times-bold-r-*-*-*-240-*}
 
 # font for help
-set hfont {-adobe-courier-medium-r-*-*-*-140-*}
+set hfont {-adobe-courier-medium-r-*-*-*-240-*}
+
+# font for buttons and labels
+set blfont {-adobe-helvetica-bold-r-*-*-*-240-*}
 
 # default for -vb opt (visual bell)
 set vbell 0
@@ -121,9 +104,6 @@ set blbl(load) {Load XMahjongg Board}
 set blbl(undo) {Undo Last Move}
 set blbl(game) { Game #: }
 set blbl(rem) {Tiles Remaining: }
-
-# font for buttons and labels
-set blfont {-adobe-helvetica-bold-r-*-*-*-120-*}
 
 # END OF USER CONFIGURABLE STUFF
 
@@ -214,11 +194,8 @@ OPTIONS
       tkmahjongg  supports  a  number  of  command-line  options:
 
            [-b #]                 Choose game # (0-99999)
-           [-c]                   Color tiles by group not level
            [-geometry geom]       Set window geometry to geom
-           [-i]                   Start iconified
-           [-l /path/to/file]     Load xmahjongg layout file
-           [-r]                   Reverse fg/bg colors
+           [-l layout]            Load xmahjongg layout
            [-vb]                  Visual bell (not audible)
 
       If you  use the -geometry option,  do not  specify a window

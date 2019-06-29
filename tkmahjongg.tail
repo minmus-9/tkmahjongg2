@@ -43,21 +43,21 @@ set tile_info(man6) {2 4 {man6}}
 set tile_info(man7) {2 4 {man7}}
 set tile_info(man8) {2 4 {man8}}
 set tile_info(man9) {2 4 {man9}}
-set tile_info(northwind) {3 4 {northwind}}
-set tile_info(southwind) {3 4 {southwind}}
-set tile_info(eastwind) {3 4 {eastwind}}
-set tile_info(westwind) {3 4 {westwind}}
-set tile_info(flbamboo) {4 1 {flbamboo florchid flflum flchrys}}
-set tile_info(florchid) {4 1 {flbamboo florchid flflum flchrys}}
-set tile_info(flflum) {4 1 {flbamboo florchid flflum flchrys}}
-set tile_info(flchrys) {4 1 {flbamboo florchid flflum flchrys}}
-set tile_info(spring) {5 1 {spring summer autumn winter}}
-set tile_info(summer) {5 1 {spring summer autumn winter}}
-set tile_info(autumn) {5 1 {spring summer autumn winter}}
-set tile_info(winter) {5 1 {spring summer autumn winter}}
-set tile_info(dragong) {6 4 {dragong}}
-set tile_info(dragonc) {6 4 {dragonc}}
-set tile_info(dragonh) {6 4 {dragonh}}
+set tile_info(wind-north) {3 4 {wind-north}}
+set tile_info(wind-south) {3 4 {wind-south}}
+set tile_info(wind-east) {3 4 {wind-east}}
+set tile_info(wind-west) {3 4 {wind-west}}
+set tile_info(flower-bamboo) {4 1 {flower-bamboo flower-orchid flower-plum flower-chrysanthemum}}
+set tile_info(flower-orchid) {4 1 {flower-bamboo flower-orchid flower-plum flower-chrysanthemum}}
+set tile_info(flower-plum) {4 1 {flower-bamboo flower-orchid flower-plum flower-chrysanthemum}}
+set tile_info(flower-chrysanthemum) {4 1 {flower-bamboo flower-orchid flower-plum flower-chrysanthemum}}
+set tile_info(season-spring) {5 1 {season-spring season-summer season-autumn season-winter}}
+set tile_info(season-summer) {5 1 {season-spring season-summer season-autumn season-winter}}
+set tile_info(season-autumn) {5 1 {season-spring season-summer season-autumn season-winter}}
+set tile_info(season-winter) {5 1 {season-spring season-summer season-autumn season-winter}}
+set tile_info(dragon-green) {6 4 {dragon-green}}
+set tile_info(dragon-chun) {6 4 {dragon-chun}}
+set tile_info(dragon-haku) {6 4 {dragon-haku}}
 
 ########################################################################
 
@@ -67,22 +67,14 @@ if ![catch {set geometry}] {
     catch {wm geometry . $geometry}
 }
 while {[llength $argv]} {
-    if {[lindex $argv 0]=="-i"} {
-        wm iconify .
-    } elseif {[lindex $argv 0]=="-r"} {
-        set swap $wfg
-        set wfg $wbg
-        set wbg $swap
-    } elseif {[lindex $argv 0]=="-vb"} {
+    if {[lindex $argv 0]=="-vb"} {
         set vbell 1
     } elseif {[lindex $argv 0]=="-l"} {
-        set startupFile [lindex $argv 1]
+        set_board [lindex $argv 1]
         set argv [lreplace $argv 0 0]
     } elseif {[lindex $argv 0]=="-b"} {
         set rSeed [expr int([lindex $argv 1]) % 1000000000]
         set argv [lreplace $argv 0 0]
-    } elseif {[lindex $argv 0]=="-class"} {
-        set copt 1
     } else {
         puts stderr "unknown option: [lindex $argv 0]"
         exit 1
@@ -93,8 +85,8 @@ while {[llength $argv]} {
 # create main UI
 . configure -background $wbg
 # compute grid size if in text mode
-set wtile 64
-set htile 64
+set wtile 128
+set htile 128
 
 set halfw [expr 0.5*$wtile]
 set halfh [expr 0.5*$htile]
@@ -171,27 +163,27 @@ proc about {} {
     .c create text [expr $xhalfw*15] [expr $xhalfh*1.0] -text "TkMahjongg" \
         -font -adobe-helvetica-bold-r-*-*-*-240-* -fill $wfg
     .c create text [expr $xhalfw*15] [expr $xhalfh*2.6] \
-        -text "by Mark Hays  <hays@azstarnet.com>" \
+        -text "by Mark Hays  <fin13782654@gmail.com>" \
         -font -adobe-helvetica-bold-r-*-*-*-180-* -fill $wfg
     .c create text [expr $xhalfw*15] [expr $xhalfh*4.5] \
-        -font -adobe-helvetica-bold-r-*-*-*-120-* -fill $wfg \
+        -font -adobe-helvetica-bold-r-*-*-*-180-* -fill $wfg \
         -anchor center -justify center \
         -text \
-{
-Copyright (c) 1997 by Mark Hays. All Rights Reserved.
+{Copyright (c) 1997-2019 by Mark Hays. All Rights Reserved.}
 
-$Id: tkmahjongg,v 1.7 1997/12/08 05:58:51 hays Exp hays $}
     .c create text [expr $xhalfw*15] [expr $xhalfh*7] \
         -font -adobe-helvetica-bold-r-*-*-*-180-* -fill $wfg \
         -anchor n -justify center \
         -text \
-{Board layouts and tiles were pilfered from XMahjongg
+{Board layouts were pilfered from XMahjongg
 
 XMahjongg Layouts are Copyright (c) 1990 by
 Jeff Young  <jsy@cray.com>
 
-Graphical Tiles are Copyright (c) 1988 by
-Mark Holm  <tektronix!tessi!exc!markh>}
+Graphical Tiles are Copyright by
+Martin Persson  <contact@martinpersson.org>
+http://www.martinpersson.org
+}
 }
 
 about
@@ -229,8 +221,6 @@ foreach name [array names tile_info] {
         for {set i 0} {$i<$n} {incr i} {
             set in ${name}_$i
             image create photo $in -data $image_data($name) -format PNG
-            $in configure -foreground $tfg \
-                    -background [lindex $classtab $cls]
             lappend iList $in
         }
     }
@@ -492,10 +482,10 @@ proc loadFile {{filename {}}} {
 }
 
 # this deals the tiles
-proc deal {{filename {}}} {
+proc deal {{layout {}}} {
     global deck nTiles tileDesc
 
-    if {$filename!={}} { loadFile $filename }
+    if {$layout!={}} { set_board $layout }
     set nTiles 0
     foreach data $tileDesc {
         set y [lindex $data 0]
@@ -512,8 +502,8 @@ proc deal {{filename {}}} {
 
 # this renders the table onto the canvas
 proc draw {} {
-    global copt halfw halfh htile tab tfg tfont wtile xhalfw xhalfh
-    global btfont classtab colortab tile_info tile_text
+    global copt halfw halfh htile tab tfg wtile xhalfw xhalfh
+    global classtab colortab tile_info tile_text
     .c delete all
     for {set level 0} {$level<6} {incr level} {
         set color [lindex $colortab $level]
@@ -534,11 +524,11 @@ proc draw {} {
 }
 
 # this initializes everything and starts a new game
-proc newGame {{filename {}}} {
+proc newGame {{layout {}}} {
     setup
     initTab
     shuffle
-    deal $filename
+    deal $layout
     draw
 }
 
