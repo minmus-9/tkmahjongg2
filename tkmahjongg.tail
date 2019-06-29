@@ -9,7 +9,7 @@ set tileDesc { }
 
 proc set_board name {
     global board_data tileDesc
-    set tileDesc [split $board_data($name) "\n"]
+    set tileDesc [split [string trim $board_data($name)] "\n"]
 }
 
 set_board default
@@ -70,7 +70,7 @@ while {[llength $argv]} {
     if {[lindex $argv 0]=="-vb"} {
         set vbell 1
     } elseif {[lindex $argv 0]=="-l"} {
-        set_board [lindex $argv 1]
+        set startupFile [lindex $argv 1]
         set argv [lreplace $argv 0 0]
     } elseif {[lindex $argv 0]=="-b"} {
         set rSeed [expr int([lindex $argv 1]) % 1000000000]
@@ -282,13 +282,6 @@ if !$vbell {
     }
 }
 
-# this reverses a tile's colors
-proc revVid tile {
-    set bg [$tile cget -foreground]
-    set fg [$tile cget -background]
-    $tile configure -foreground $fg -background $bg
-}
-
 # this proc performs a move
 proc doMove {t1 t2} {
     global nTiles sel tab tile_info undoInfo
@@ -452,8 +445,7 @@ proc shuffle {} {
 
 # this places a tile into the tile table
 proc put {x y l img} {
-    global colortab copt tab
-    if {!$copt} {$img configure -background [lindex $colortab $l]}
+    global tab
     set tab($x:$y:$l) $img
 }
 
@@ -502,11 +494,10 @@ proc deal {{layout {}}} {
 
 # this renders the table onto the canvas
 proc draw {} {
-    global copt halfw halfh htile tab tfg wtile xhalfw xhalfh
-    global classtab colortab tile_info tile_text
+    global halfw halfh htile tab tfg wtile xhalfw xhalfh
+    global classtab tile_info tile_text
     .c delete all
     for {set level 0} {$level<6} {incr level} {
-        set color [lindex $colortab $level]
         for {set x 0} {$x<32} {incr x} {
             for {set y 0} {$y<16} {incr y} {
                 if ![catch {set img $tab($x:$y:$level)}] {
