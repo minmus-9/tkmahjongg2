@@ -556,6 +556,9 @@ proc draw {} {
                             set data [$name data -format PNG]
                         }
                         $img configure -data $data
+                    } else {
+                        set xx [expr $xx - $level * 3]
+                        set yy [expr $yy - $level * 3]
                     }
                     .c create image $xx $yy -anchor nw -image $img \
                             -tags "$x:$y:$level $img"

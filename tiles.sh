@@ -63,11 +63,17 @@ find . -name '*.png' -print | sort | (
         case "$g" in *-[0-9]) continue;; esac
         tiles="$tiles $g"
         echo "set bitmap_data($g) {"
+        t=30
+        case "$g" in
+            bamboo1*) t=50;;
+            season*|flower*) t=70;;
+            wind*) t=60;;
+        esac
         convert $f \
             -crop "80x120+24+8" +repage \
-            -channel R -threshold 50% \
-            -channel G -threshold 50% \
-            -channel B -threshold 50% \
+            -channel R -threshold $t% \
+            -channel G -threshold $t% \
+            -channel B -threshold $t% \
             -trim \
             xbm:-
         echo "}"

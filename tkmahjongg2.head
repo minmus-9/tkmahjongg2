@@ -76,9 +76,10 @@
 set copt 0
 
 # per-level colors
-set colortab_mono  {#008cf8 #00fc00 #f7fc00 #f87c00 #f80000 #808080}
 set colortab_mono  {#008cf8 #00fcf8 #00fc00 #f8fc00 #f87c00 #f80000 #808080}
+set colortab_mono  {#80a0ff #00f0e8 #00ff00 #e0e000 #f87c00 #f84040 #c0c0c0}
 set colortab_color {#e00000 #e0a000 #808080 #00a000 #0000ff #600060}
+
 # window background
 set wbg snow
 
