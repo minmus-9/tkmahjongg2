@@ -431,6 +431,7 @@ proc doSel v {
 # this does global game initialization
 proc setup {} {
     global sel undoInfo
+    if {$sel!={}} {revVid $sel}
     set sel {}
     set undoInfo {}
     .undo configure -state disabled
