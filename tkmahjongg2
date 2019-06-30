@@ -39335,6 +39335,7 @@ button .undo -fg $wfg -bg $wbg -state disabled -font $blfont \
         -text $blbl(undo) \
 -command {
     set cmd [lindex $undoInfo end]
+    if {$sel!=""} { revVid $sel }
     if [catch {set undoInfo [lreplace $undoInfo end end]}] { set undoInfo {} }
     if ![llength $undoInfo] {
         .undo configure -state disabled
