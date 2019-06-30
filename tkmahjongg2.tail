@@ -70,6 +70,8 @@ if ![catch {set geometry}] {
 while {[llength $argv]} {
     if {[lindex $argv 0]=="-vb"} {
         set vbell [expr 1 - $vbell]
+    } elseif {[lindex $argv 0]=="-C"} {
+        set copt [expr 1 - $copt]
     } elseif {[lindex $argv 0]=="-l"} {
         set startupLayout [lindex $argv 1]
         set argv [lreplace $argv 0 0]
@@ -82,16 +84,23 @@ while {[llength $argv]} {
     }
     set argv [lreplace $argv 0 0]
 }
+if {$copt} { set colortab $colortab_color } else { set colortab $colortab_mono }
 
 # create main UI
 . configure -background $wbg
 #
-# compute grid size if in text mode
-set twidth 128
-set theight 128
+# compute grid size
+if {$copt} {
+    set twidth 128
+    set theight 128
+    # trim some transparent width
+    set wtrim 12
+} else {
+    set twidth 80
+    set theight 120
+    set wtrim 0
+}
 
-# trim some transparent width
-set wtrim 12
 set wtile [expr $twidth - $wtrim * 2]
 set htile $theight
 
@@ -249,16 +258,23 @@ pack .xhelp.t -fill both
 set iList {}
 foreach name [array names tile_info] {
     foreach {cls n match} $tile_info($name) {
-        image create photo tmp_image -data $image_data($name) -format PNG
-        image create photo $name
-        $name copy tmp_image -from $wtrim 0 [expr $wtile + $wtrim] $htile
-        rename tmp_image {}
+        if {$copt} {
+            image create photo tmp_image -data $image_data($name) -format PNG
+            image create photo $name
+            $name copy tmp_image -from $wtrim 0 [expr $wtile + $wtrim] $htile
+            rename tmp_image {}
+        }
         for {set i 0} {$i<$n} {incr i} {
             set in ${name}_$i
-            set image_to_name($in) $name
-            set reversed($in) 0
-            set data [$name data -format PNG]
-            image create photo $in -data $data -format PNG
+            if {$copt} {
+                set image_to_name($in) $name
+                set reversed($in) 0
+                set data [$name data -format PNG]
+                image create photo $in -data $data -format PNG
+            } else {
+                image create bitmap $in -data $bitmap_data($name)
+                $in configure -foreground $tfg
+            }
             lappend iList $in
         }
     }
@@ -319,15 +335,23 @@ if !$vbell {
     }
 }
 
-proc revVid tile {
-    global image_data image_to_name reversed
-    set name $image_to_name($tile)
-    if {$reversed($tile) == 1} {
-        $tile configure -data $image_data($name)
-        set reversed($tile) 0
-    } else {
-        $tile configure -data $image_data($name-inv)
-        set reversed($tile) 1
+if {$copt} {
+    proc revVid tile {
+        global image_data image_to_name reversed
+        set name $image_to_name($tile)
+        if {$reversed($tile) == 1} {
+            $tile configure -data $image_data($name)
+            set reversed($tile) 0
+        } else {
+            $tile configure -data $image_data($name-inv)
+            set reversed($tile) 1
+        }
+    }
+} else {
+    proc revVid tile {
+         set bg [$tile cget -foreground]
+         set fg [$tile cget -background]
+         $tile configure -foreground $fg -background $bg
     }
 }
 
@@ -462,7 +486,8 @@ proc shuffle {} {
 
 # this places a tile into the tile table
 proc put {x y l img} {
-    global tab
+    global colortab copt tab
+    if {!$copt} {$img configure -background [lindex $colortab $l]}
     set tab($x:$y:$l) $img
 }
 
@@ -513,6 +538,7 @@ proc deal {{layout {}}} {
 proc draw {} {
     global halfw halfh htile tab wtile xhalfw xhalfh
     global tile_info tile_text colortab image_to_name
+    global copt
     .c delete all
     for {set level 0} {$level<7} {incr level} {
         for {set x 0} {$x<32} {incr x} {
@@ -520,15 +546,17 @@ proc draw {} {
                 if ![catch {set img $tab($x:$y:$level)}] {
                     set xx [expr $x*$xhalfw+4]
                     set yy [expr $y*$xhalfh+4]
-                    set name $image_to_name($img)
-                    if {$level} {
-                        set idx [expr [llength $colortab] - $level]
-                        set color [lindex $colortab $idx]
-                        set data [$name data -background $color -format PNG]
-                    } else {
-                        set data [$name data -format PNG]
+                    if {$copt} {
+                        set name $image_to_name($img)
+                        if {$level} {
+                            set idx [expr [llength $colortab] - $level]
+                            set color [lindex $colortab $idx]
+                            set data [$name data -background $color -format PNG]
+                        } else {
+                            set data [$name data -format PNG]
+                        }
+                        $img configure -data $data
                     }
-                    $img configure -data $data
                     .c create image $xx $yy -anchor nw -image $img \
                             -tags "$x:$y:$level $img"
                     .c bind $img <1> "doSel $img"
