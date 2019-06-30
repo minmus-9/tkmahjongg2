@@ -2,7 +2,7 @@
 ## tkmahjongg.tail
 
 # revvid lut
-foreach tile $tiles_normal {
+foreach tile $tiles {
     set revvid($tile) $tile-inv
     set revvid($tile-inv) $tile
 }

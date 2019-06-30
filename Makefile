@@ -1,5 +1,5 @@
-tkmahjongg:	clean boards.tcl tiles.tcl tkmahjongg.head tkmahjongg.tail
-	cat tkmahjongg.head boards.tcl tiles.tcl tkmahjongg.tail > $@
+tkmahjongg2:	clean boards.tcl tiles.tcl tkmahjongg2.head tkmahjongg2.tail
+	cat tkmahjongg2.head boards.tcl tiles.tcl tkmahjongg2.tail > $@
 	chmod 755 $@
 
 boards.tcl:
@@ -8,16 +8,16 @@ boards.tcl:
 tiles.tcl:	
 	sh tiles.sh > $@
 
-install:	tkmahjongg
+install:	tkmahjongg2
 	mkdir -p $$HOME/bin $$HOME/.local/share/applications $$HOME/.local/share/icons
-	cp tkmahjongg $$HOME/bin
-	cp tkmahjongg.desktop $$HOME/.local/share/applications
-	cp tkmahjongg.png $$HOME/.local/share/icons
+	cp tkmahjongg2 $$HOME/bin
+	cp tkmahjongg2.desktop $$HOME/.local/share/applications
+	cp tkmahjongg2.png $$HOME/.local/share/icons
 
 uninstall:	
-	rm $$HOME/.local/bin/tkmahjongg
-	rm $$HOME/.local/share/applications/tkmahjongg.desktop
-	rm $$HOME/.local/share/icons/tkmahjongg.png
+	rm -f $$HOME/bin/tkmahjongg2
+	rm -f $$HOME/.local/share/applications/tkmahjongg2.desktop
+	rm -f $$HOME/.local/share/icons/tkmahjongg2.png
 
 clean:	
-	rm -rf boards.tcl tiles.tcl tkmahjongg tiles/cooked
+	rm -rf boards.tcl tiles.tcl tkmahjongg2 tiles/cooked
