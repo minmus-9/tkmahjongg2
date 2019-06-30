@@ -8,6 +8,7 @@ find ../raw -name '*.png' -print | sort | (
         g=`basename $f`
         lbl="X"
         geom="+30+20"
+        size=20
         case "$g" in
             *-[0-9].png) continue;;
             face-down*) continue;;
@@ -15,21 +16,38 @@ find ../raw -name '*.png' -print | sort | (
             dragon-chun*) lbl="C";;
             dragon-green*) lbl="G";;
             dragon-haku*) lbl="H";;
-            flower-bamboo*) lbl="Bamboo"; geom=+0+16;;
-            flower-chrys*) lbl="Chrysanthemum"; geom=+0+16;;
-            flower-orchid*) lbl="Orchid"; geom=+0+16;;
-            flower-plum*) lbl="Plum"; geom=+0+16;;
-            season-spring*) lbl="Spring"; geom=+0+16;;
-            season-summer*) lbl="Summer"; geom=+0+16;;
-            season-autumn*) lbl="Autumn"; geom=+0+16;;
-            season-winter*) lbl="Winter"; geom=+0+16;;
+            flower-bamboo*) lbl="Bamboo"; geom=+0+12; size=16;;
+            flower-chrys*) lbl="Mum"; geom=+8+16; size=16;;
+            flower-orchid*) lbl="Orchid"; geom=+0+16; size=16;;
+            flower-plum*) lbl="Plum"; geom=+8+16; size=16;;
+            season-spring*) lbl="Spring"; geom=+0+12; size=16;;
+            season-summer*) lbl="Summer"; geom=+0+12; size=16;;
+            season-autumn*) lbl="Autumn"; geom=+0+12; size=16;;
+            season-winter*) lbl="Winter"; geom=+0+12; size=16;;
             wind-north*) lbl=N;;
             wind-east*) lbl=E;;
             wind-south*) lbl=S;;
             wind-west*) lbl=W;;
         esac
-        convert $f -gravity north -annotate $geom $lbl -fill black \
-            -font Times -pointsize 48 \
+        case "$g" in
+            bamboo8*) geom=+0+8;;
+            man[69]*) geom=+30+8;;
+            pin8*) geom=+30+12;;
+            *1*) geom=+30+12;;
+            *2*) ;;
+            *3*) ;;
+            *4*) geom=+0+8;;
+            *5*) geom=+0+8;;
+            *6*) geom=+0+8;;
+            *7*) ;;
+            *8*) ;;
+            *9*) geom=+0+7;;
+        esac
+        convert $f \
+            -gravity north \
+            -fill black \
+            -font DejaVu-Serif -pointsize $size \
+            -annotate $geom $lbl \
             $g
     done
 )

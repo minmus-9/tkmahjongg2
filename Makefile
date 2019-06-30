@@ -20,4 +20,4 @@ uninstall:
 	rm $$HOME/.local/share/icons/tkmahjongg.png
 
 clean:	
-	rm -f boards.tcl tiles.tcl tkmahjongg
+	rm -rf boards.tcl tiles.tcl tkmahjongg tiles/cooked
