@@ -1,11 +1,13 @@
-tkmahjongg2:	clean boards.tcl tiles.tcl tkmahjongg2.head tkmahjongg2.tail
+all:	clean tkmahjongg2
+
+tkmahjongg2:	boards.tcl tiles.tcl tkmahjongg2.head tkmahjongg2.tail
 	cat tkmahjongg2.head boards.tcl tiles.tcl tkmahjongg2.tail > $@
 	chmod 755 $@
 
-boards.tcl:
+boards.tcl:	boards.sh
 	sh boards.sh > $@
 
-tiles.tcl:	
+tiles.tcl:	tiles.sh
 	sh tiles.sh > $@
 
 install:	tkmahjongg2
