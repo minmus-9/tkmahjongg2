@@ -125,7 +125,7 @@ set xsp [expr $wtile+4]
 set ysp [expr $htile+4]
 set xhalfw [expr 0.5*$xsp]
 set xhalfh [expr 0.5*$ysp]
-canvas .c -width [expr $xsp*15+12] -height [expr $ysp*8+12] \
+canvas .c -width [expr $xsp*15+18] -height [expr $ysp*8+22] \
         -bd 0 -highlightthickness 0 -background $wbg
 pack .c -side bottom -padx 2 -pady 2
 .c configure -cursor watch
@@ -574,8 +574,8 @@ proc draw {} {
                         }
                         $img configure -data $data
                     } else {
-                        set xx [expr $xx - $level * 3]
-                        set yy [expr $yy - $level * 3]
+                        set xx [expr $xx + 18 - $level * 3]
+                        set yy [expr $yy + 18 - $level * 3]
                     }
                     .c create image $xx $yy -anchor nw -image $img \
                             -tags "$x:$y:$level $img"
