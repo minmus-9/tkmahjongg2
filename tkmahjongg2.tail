@@ -1,6 +1,19 @@
 #######################################################################
 ## tkmahjongg.tail
 
+# write out icon and desktop file
+proc initialize {} {
+    global desktop_data icon_data
+    puts "writing desktop file"
+    set fp [open "/usr/share/applications/tkmahjongg2.desktop" w 0644]
+    puts -nonewline $fp $desktop_data
+    close $fp
+    puts "writing icon"
+    exec base64 -d > "/usr/share/icons/tkmahjongg2.png" << $icon_data
+    puts "done"
+    exit 0
+}
+
 # revvid lut
 foreach tile $tiles {
     set revvid($tile) $tile-inv
@@ -68,7 +81,9 @@ if ![catch {set geometry}] {
     catch {wm geometry . $geometry}
 }
 while {[llength $argv]} {
-    if {[lindex $argv 0]=="-vb"} {
+    if {[lindex $argv 0]=="-init"} {
+	    initialize
+    } elseif {[lindex $argv 0]=="-vb"} {
         set vbell [expr 1 - $vbell]
     } elseif {[lindex $argv 0]=="-C"} {
         set copt [expr 1 - $copt]
