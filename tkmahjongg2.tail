@@ -96,8 +96,8 @@ if {$copt} {
     # trim some transparent width
     set wtrim 12
 } else {
-    set twidth 80
-    set theight 120
+    set twidth 120
+    set theight 180
     set wtrim 0
 }
 

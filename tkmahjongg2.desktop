@@ -1,12 +1,11 @@
 [Desktop Entry]
-Name=TkMahjongg
+Name=TkMahjongg2
 Comment=Play Mahjongg
-Keywords=mahjongg;
-TryExec=tkmahjongg
+Keywords=Mahjongg;
+TryExec=tkmahjongg2
 Exec=tkmahjongg2
 StartupNotify=true
 Terminal=false
 Type=Application
-Icon=tkmahjongg2
-X-GNOME-DocPath=
-Categories=MahJongg;
+Icon=/usr/share/icons/tkmahjongg2.png
+Categories=Mahjongg;Games;

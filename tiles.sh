@@ -71,6 +71,7 @@ find . -name '*.png' -print | sort | (
         esac
         convert $f \
             -crop "80x120+24+8" +repage \
+            -resize 120x180 \
             -channel R -threshold $t% \
             -channel G -threshold $t% \
             -channel B -threshold $t% \
