@@ -85,9 +85,15 @@ while {[llength $argv]} {
 
 # create main UI
 . configure -background $wbg
+#
 # compute grid size if in text mode
-set wtile 128
-set htile 128
+set twidth 128
+set theight 128
+
+# trim some transparent width
+set wtrim 12
+set wtile [expr $twidth - $wtrim * 2]
+set htile $theight
 
 set halfw [expr 0.5*$wtile]
 set halfh [expr 0.5*$htile]
@@ -245,8 +251,7 @@ foreach name [array names tile_info] {
     foreach {cls n match} $tile_info($name) {
         image create photo tmp_image -data $image_data($name) -format PNG
         image create photo $name
-        $name copy tmp_image
-        # -from 16 0 112 128
+        $name copy tmp_image -from $wtrim 0 [expr $wtile + $wtrim] $htile
         rename tmp_image {}
         for {set i 0} {$i<$n} {incr i} {
             set in ${name}_$i
@@ -513,8 +518,6 @@ proc draw {} {
         for {set x 0} {$x<32} {incr x} {
             for {set y 0} {$y<16} {incr y} {
                 if ![catch {set img $tab($x:$y:$level)}] {
-                    #set xx [expr $x*$xhalfw+4+5*$level]
-                    #set yy [expr $y*$xhalfh+4+5*$level]
                     set xx [expr $x*$xhalfw+4]
                     set yy [expr $y*$xhalfh+4]
                     set name $image_to_name($img)
