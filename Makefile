@@ -1,4 +1,4 @@
-all:	clean tkmahjongg2
+all:	tkmahjongg2
 
 tkmahjongg2:	boards.tcl tiles.tcl tkmahjongg2.head tkmahjongg2.tail
 	cat tkmahjongg2.head boards.tcl tiles.tcl tkmahjongg2.tail > $@
