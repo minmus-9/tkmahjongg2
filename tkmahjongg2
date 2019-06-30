@@ -39588,7 +39588,8 @@ proc doSel v {
 
 # this does global game initialization
 proc setup {} {
-    global undoInfo
+    global sel undoInfo
+    set sel {}
     set undoInfo {}
     .undo configure -state disabled
 }
