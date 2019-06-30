@@ -63,11 +63,19 @@ find . -name '*.png' -print | sort | (
         case "$g" in *-[0-9]) continue;; esac
         tiles="$tiles $g"
         echo "set bitmap_data($g) {"
-        convert $f xbm:-
+        convert $f \
+            -crop "80x120+24+8" +repage \
+            -channel R -threshold 50% \
+            -channel G -threshold 50% \
+            -channel B -threshold 50% \
+            -trim \
+            xbm:-
         echo "}"
+
         echo "set image_data($g) {"
         base64 < $f
         echo "}"
+
         echo "set image_data($g-inv) {"
         convert -negate $f png:- | base64
         echo "}"
