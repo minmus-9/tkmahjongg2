@@ -73,7 +73,7 @@
 # USER CONFIGURABLE STUFF
 
 # default color option
-set copt 1
+set copt 0
 
 # per-level colors
 set colortab_mono  {#008cf8 #00fc00 #f7fc00 #f87c00 #f80000 #808080}
@@ -202,6 +202,7 @@ OPTIONS
       tkmahjongg  supports  a  number  of  command-line  options:
 
            [-b #]                 Choose game # (0-99999)
+	   [-C]			  Use full-color tiles
            [-geometry geom]       Set window geometry to geom
            [-l layout]            Load xmahjongg layout
            [-vb]                  Visual bell (not audible)
