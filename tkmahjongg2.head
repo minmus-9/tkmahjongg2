@@ -72,14 +72,21 @@
 
 # USER CONFIGURABLE STUFF
 
-# per-level colors
-set colortab {#008cf8 #00fc00 #f7fc00 #f87c00 #f80000 #808080}
-set colortab {red orange yellow green blue violet}
-set colortab {#e00000 #e0a000 #808080 #00a000 #0000ff #600060}
+# default color option
+set copt 1
 
+# per-level colors
+set colortab_mono  {#008cf8 #00fc00 #f7fc00 #f87c00 #f80000 #808080}
+set colortab_mono  {#008cf8 #00fcf8 #00fc00 #f8fc00 #f87c00 #f80000 #808080}
+set colortab_color {#e00000 #e0a000 #808080 #00a000 #0000ff #600060}
 # window background
-set wbg {#004000}
-set wbg black
+set wbg snow
+
+# window foreground
+set wfg black
+
+# mono tile fg
+set tfg black
 
 # RNG seed
 set rSeed [expr [clock seconds] % 1000000000]
@@ -98,9 +105,6 @@ set blfont {-adobe-helvetica-bold-r-*-*-*-280-*}
 
 # default for -vb opt (visual bell)
 set vbell 1
-
-# window foreground
-set wfg white
 
 # labels for graphical/text display mode
 set blbl(about) {About}
