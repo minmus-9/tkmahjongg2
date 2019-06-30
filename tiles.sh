@@ -43,6 +43,7 @@ find ../raw -name '*.png' -print | sort | (
             *8*) ;;
             *9*) geom=+0+7;;
         esac
+        h=`echo $g | sed -e 's,\.png,\.xbm,'`
         convert $f \
             -gravity north \
             -fill black \
@@ -56,11 +57,14 @@ find . -name '*.png' -print | sort | (
     echo "########################################################################"
     echo "## tiles.tcl"
     echo
-    normal=""
+    tiles=""
     while read f; do \
         g=`basename $f | sed -e 's,\..*,,'`
         case "$g" in *-[0-9]) continue;; esac
-        normal="$normal $g"
+        tiles="$tiles $g"
+        echo "set bitmap_data($g) {"
+        convert $f xbm:-
+        echo "}"
         echo "set image_data($g) {"
         base64 < $f
         echo "}"
@@ -69,8 +73,8 @@ find . -name '*.png' -print | sort | (
         echo "}"
         echo
     done
-    echo -n "set tiles_normal {"
-    echo -n $normal
+    echo -n "set tiles {"
+    echo -n $tiles
     echo "}"
     cat <<EOF
 
