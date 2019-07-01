@@ -1,3 +1,12 @@
+########################################################################
+## Makefile
+##
+## make                 to exclude color support
+## make BUILD_COLOR=yes to include color support
+##
+
+BUILD_COLOR:=no
+
 SHARE=/usr/share
 BIN=/usr/bin
 
@@ -11,7 +20,7 @@ boards.tcl:	boards.sh
 	sh boards.sh > $@
 
 tiles.tcl:	tiles.sh
-	sh tiles.sh > $@
+	sh tiles.sh $(BUILD_COLOR) > $@
 
 desktop.tcl:	tkmahjongg2.desktop
 	(echo "set desktop_data {"; cat $<; echo "}"; echo) > $@

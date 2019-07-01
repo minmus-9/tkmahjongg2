@@ -1,5 +1,10 @@
 #!/bin/sh
 
+case "$1" in
+    [Yy]*) color=y;;
+        *) color=;;
+esac
+
 rm -rf tiles/cooked
 mkdir -p tiles/cooked
 cd tiles/cooked
@@ -78,6 +83,8 @@ find . -name '*.png' -print | sort | (
             -trim \
             xbm:-
         echo "}"
+
+        [ -z "$color" ] && continue
 
         echo "set image_data($g) {"
         base64 < $f

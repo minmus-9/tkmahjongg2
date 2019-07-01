@@ -99,6 +99,10 @@ while {[llength $argv]} {
     }
     set argv [lreplace $argv 0 0]
 }
+if {$copt && ![array exists image_data]} {
+    puts "color not available. exiting."
+    exit 1
+}
 if {$copt} { set colortab $colortab_color } else { set colortab $colortab_mono }
 
 # create main UI
