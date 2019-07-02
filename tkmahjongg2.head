@@ -89,9 +89,6 @@ set wfg black
 # mono tile fg
 set tfg black
 
-# RNG seed
-set rSeed [expr [clock seconds] % 1000000000]
-
 # layout to load at startup
 set startupLayout default
 
@@ -127,11 +124,6 @@ BACKGROUND
        I shamelessly swiped the core of the game from xmahjongg.
        This includes the board and documentation ;^) The tiles
        are an open-source set from the internet.
-
-       Well,  there is one other reason I wrote it:  to get it to
-       work under Windoze...  I apologize in advance to those who
-       feel that  this feature is  morally and/or philosophically
-       repugnant.
 
 DESCRIPTION
        Mah  jongg  is  an  ancient chinese game usually played by
@@ -169,6 +161,7 @@ THEORY OF PLAY
        causes all  matching tiles  to flash,  regardless of their
        playability or visibility.
 
+       XXX UPDATE ME!
        The  top  area is the control field.  The board number and
        the number of remaining tiles are on the right side of the
        board.   The  left  side has some buttons  for controlling
@@ -203,7 +196,7 @@ OPTIONS
       tkmahjongg  supports  a  number  of  command-line  options:
 
            [-b #]                 Choose game # (0-99999)
-	   [-C]			  Use full-color tiles
+	       [-C]                   Use full-color tiles
            [-geometry geom]       Set window geometry to geom
            [-l layout]            Load xmahjongg layout
            [-vb]                  Visual bell (not audible)

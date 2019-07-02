@@ -73,6 +73,9 @@ set tile_info(dragon-green) {6 4 {dragon-green}}
 set tile_info(dragon-chun) {6 4 {dragon-chun}}
 set tile_info(dragon-haku) {6 4 {dragon-haku}}
 
+# RNG seed
+set rSeed -1
+
 ########################################################################
 
 # process args
@@ -106,7 +109,9 @@ if {$copt && ![array exists image_data]} {
 if {$copt} { set colortab $colortab_color } else { set colortab $colortab_mono }
 
 # create main UI
-. configure -background $wbg
+menu .bar -bg $wbg -fg $wfg
+. configure -background $wbg -menu .bar
+
 #
 # compute grid size
 if {$copt} {
@@ -134,88 +139,86 @@ canvas .c -width [expr $xsp*15+18] -height [expr $ysp*8+22] \
 pack .c -side bottom -padx 2 -pady 2
 .c configure -cursor watch
 
-button .about -text $blbl(about) -fg $wfg -bg $wbg \
-        -font $blfont -command {
-    .c delete all
-    .c configure -cursor crosshair
-    about
-    update
-    bind .c <1> {
-        .c configure -cursor {}
-        bind .c <1> {}
-        draw
+menu .bar.game -font $blfont -tearoff 0
+.bar add cascade -menu .bar.game -label Game -font $blfont
+
+.bar add command \
+    -label $blbl(undo) \
+    -font $blfont \
+    -state disabled \
+    -command {
+        set cmd [lindex $undoInfo end]
+        if {$sel!=""} { revVid $sel }
+        if [catch {set undoInfo [lreplace $undoInfo end end]}] { set undoInfo {} }
+        if ![llength $undoInfo] {
+            undo_state disabled
+        }
+        eval $cmd
+    }
+
+proc undo_state {{state {}}} {
+    if {$state == ""} { return [.bar entrycget Undo -state] }
+    .bar entryconfigure Undo -state $state
+}
+
+menu .bar.board -font $blfont -tearoff 0
+.bar add cascade -menu .bar.board -label Board -font $blfont
+
+menu .bar.help -font $blfont -tearoff 0
+.bar add cascade -menu .bar.help -label Help -font $blfont
+
+.bar.help add command \
+    -label Help \
+    -font $blfont \
+    -command {wm deiconify .xhelp; raise .xhelp}
+
+.bar.help add command \
+    -label $blbl(about) \
+    -font $blfont \
+    -command {
+        .c delete all
+        .c configure -cursor crosshair
+        about
+        update
+        bind .c <1> {
+            .c configure -cursor {}
+            bind .c <1> {}
+            draw
     }
 }
 
-button .new -fg $wfg -bg $wbg -text $blbl(new) \
-        -font $blfont -command {
-    if [query] newGame
-}
+.bar.game add command \
+    -label $blbl(new) \
+    -font $blfont -command { if [query] newGame }
 
-button .replay -fg $wfg -bg $wbg -text $blbl(replay) \
-        -font $blfont -command {
-    if [query] replay
-}
+.bar.game add command \
+    -label $blbl(replay) \
+    -font $blfont \
+    -command { if [query] replay }
 
-button .load -fg $wfg -bg $wbg -text $blbl(load) \
-        -font $blfont -command {
-    if [query] {
-        set f [tk_getOpenFile -parent .c -title {Load Board}]
-        if {$f!={}} { loadFile $f; newGame }
-    }
-}
+.bar.game add command \
+    -label Quit \
+    -font $blfont \
+    -command { if [query] exit }
 
-button .choose -fg $wfg -bg $wbg -text $blbl(choose) \
-    -font $blfont -command {
+.bar.board add command \
+    -label $blbl(load) \
+    -font $blfont \
+    -command {
         if [query] {
-            .choose.m post [winfo pointerx .] [winfo pointery .]
+            set f [tk_getOpenFile -parent .c -title {Load Board}]
+            if {$f!={}} { loadFile $f; newGame }
         }
     }
 
-menu .choose.m -fg $wfg -bg $wbg -font $blfont
+.bar.board add separator
+
 foreach board $boards {
-    .choose.m add radio -command "newGame $board" -label $board
+    .bar.board add radiobutton \
+        -label $board \
+        -font $blfont \
+        -command "newGame $board"
 }
-
-button .undo -fg $wfg -bg $wbg -state disabled -font $blfont \
-        -text $blbl(undo) \
--command {
-    set cmd [lindex $undoInfo end]
-    if {$sel!=""} { revVid $sel }
-    if [catch {set undoInfo [lreplace $undoInfo end end]}] { set undoInfo {} }
-    if ![llength $undoInfo] {
-        .undo configure -state disabled
-    }
-    eval $cmd
-}
-
-button .quit -fg $wfg -bg $wbg -text Quit -font $blfont \
-        -command { if [query] exit }
-
-button .help -fg $wfg -bg $wbg -text Help -font $blfont \
-        -command {wm deiconify .xhelp; raise .xhelp}
-
-# labels on right
-label .lg -text $blbl(game) -fg $wfg -bg $wbg \
-        -font $blfont
-
-label .lgame -textvariable gSeed -width 10 -anchor e -fg $wfg -bg $wbg \
-        -font $blfont
-
-# shim
-label .ld -width 2 -fg $wfg -bg $wbg
-
-label .lr -text $blbl(rem) -fg $wfg -bg $wbg \
-        -font $blfont
-
-label .rem -textvariable nTiles -width 3 -fg $wfg -bg $wbg \
-        -font $blfont
-
-foreach b {.about .new .replay .load .choose .quit .help} {
-    $b configure -state disabled
-}
-pack .about .new .replay .load .choose .undo .quit .help -side left
-pack .rem .lr .ld .lgame .lg -side right
 
 proc about {} {
     global afont xhalfh xhalfw wfg
@@ -253,7 +256,7 @@ update
 
 # if a game is in progress, confirm a destructive operation
 proc query {} {
-    if {[.undo cget -state]!={disabled}} {
+    if {[undo_state]!={disabled}} {
         return [tk_dialog .qdlg Abort? {Abort Current Game?} {} 0 No Yes]
     }
     return 1
@@ -406,7 +409,7 @@ proc doMove {t1 t2} {
     incr nTiles -2
     set sel {}
     lappend undoInfo $u
-    .undo configure -state normal
+    undo_state normal
 }
 
 # this processes mouse events
@@ -439,7 +442,7 @@ proc setup {} {
     if {$sel!={}} {revVid $sel}
     set sel {}
     set undoInfo {}
-    .undo configure -state disabled
+    undo_state disabled
 }
 
 # this initializes the tile table
@@ -448,16 +451,21 @@ proc initTab {} {
     catch {unset tab}
 }
 
-if {$rSeed<0} {
-    set rSeed [expr [clock seconds] % 1000000000]
-    expr srand($rSeed)
+proc seed {{int {}}} {
+    global rSeed
+    if {$int != {}} {
+        set rSeed $int
+        expr srand($int % 1000000000)
+    }
 }
+
+seed [expr $rSeed < 0 ? [clock seconds] : $rSeed]
 
 proc ranbyte {} {
     return [expr int(rand() * 256)]
 }
 
-proc pop {x} {
+proc pop x {
     set p 0
     while {$x > 0} {
         incr p [expr $x  & 1]
@@ -466,16 +474,22 @@ proc pop {x} {
     return $p
 }
 
-proc cl2 {x} {
-    if {$x < 1} { error {x must be positive} }
-    set x [expr $x - 1]
-    for {set i 0} {$i < 6} {incr i} {
+proc rprop x {
+    set i 0
+    while {[expr $x & ($x + 1)]} {
         set x [expr $x | ($x >> (1 << $i))]
+        incr i
     }
+    return $x
+}
+
+proc cl2 x {
+    if {$x < 1} { error {x must be positive} }
+    set x [rprop [expr $x - 1]]
     return [pop $x]
 }
 
-proc rng {n} {
+proc rng n {
     if {$n == 1} { return 0 }
     if {$n  < 2} { error {n must be positive} }
     set b [cl2 $n]
@@ -494,9 +508,7 @@ proc rng {n} {
 }
 
 proc shuffle {} {
-    global deck iList gSeed rSeed
-    set gSeed $rSeed
-    set rSeed [expr int(rand() * 1000000000)]
+    global deck iList
     set deck $iList
     for {set i [expr [llength $deck] - 1]} {$i >= 1} {incr i -1} {
         set j [rng $i]
@@ -599,33 +611,25 @@ proc newGame {{layout {}}} {
     initTab
     shuffle
     deal $layout
-}
-
-# this initializes everything and starts a new game
-proc newGame {{layout {}}} {
-    setup
-    initTab
-    shuffle
-    deal $layout
     draw
 }
 
 # this replays a game
 proc replay {} {
+    global rSeed
     setup
+    seed $rSeed
+    shuffle
     deal
     draw
 }
 
 newGame $startupLayout
-foreach b {.about .new .load .choose .replay .quit .help} {
-    $b configure -state normal
-}
 .c configure -cursor {}
 
 # event bindings
 bind .c <3> { if {$sel!={}} {doSel $sel} }
-bind . <Control-Key-w> {.quit invoke}
+bind . <Control-Key-w> { if [query] exit }
 focus .
 
 ## EOF tkmahjongg.tail
