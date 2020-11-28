@@ -148,7 +148,8 @@ menu .bar.game -font $blfont -tearoff 0
     -state disabled \
     -command {
         set cmd [lindex $undoInfo end]
-        if {$sel!=""} { revVid $sel }
+        #if {$sel!=""} { revVid $sel }
+        if {$sel!=""} { doSel $sel }
         if [catch {set undoInfo [lreplace $undoInfo end end]}] { set undoInfo {} }
         if ![llength $undoInfo] {
             undo_state disabled
